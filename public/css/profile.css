@@ -1,0 +1,38 @@
+body {
+    padding-top: 80px; /* 네비게이션 바 아래 여백 추가 */
+}
+.profile-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 50px; /* 프로필 섹션 위쪽 여백 */
+    margin-bottom: 30px; /* 프로필 섹션 아래쪽 여백 */
+}
+
+.profile-details {
+    flex: 1; /* 프로필 텍스트 섹션 */
+    margin-right: 20px;
+}
+
+.profile-image {
+    flex-shrink: 0;
+    text-align: center;
+}
+
+.profile-image img {
+    border-radius: 50%;
+    max-width: 250px;
+    max-height: 250px;
+}
+
+.container {
+    margin-top: 20px;
+}
+
+h2 {
+    font-size: 2.5rem;
+}
+
+.profile-info p {
+    font-size: 1.2rem;
+}
