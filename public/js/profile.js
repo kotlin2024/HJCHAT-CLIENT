@@ -15,7 +15,7 @@ window.onload = async function () {
             profileImageElement.src = profileImageUrl;
         }
         try {
-            const response = await fetch('http://localhost:8080/member/get_user', {
+            const response = await fetch('https://localhost:443/member/get_user', {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`
@@ -61,7 +61,7 @@ document.getElementById('uploadForm').addEventListener('submit', async (event) =
 
     try {
         // Step 1: Presigned URL 요청
-        const response = await fetch(`http://localhost:8080/api/s3/upload/url?fileName=${file.name}`, {
+        const response = await fetch(`https://localhost:443/api/s3/upload/url?fileName=${file.name}`, {
             method: 'POST',
             headers: {
                 'Authorization': `Bearer ${accessToken}` // Presigned URL 요청 시에만 Authorization 헤더 포함

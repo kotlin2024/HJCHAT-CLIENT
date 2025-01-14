@@ -2,12 +2,13 @@ function login() {
     const userName = document.getElementById('userName').value; // 닉네임 가져오기
     const password = document.getElementById('password').value;
 
-    fetch('http://localhost:8080/api/oauth/login', {
+    fetch('https://localhost:443/api/oauth/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ username: userName, password }),
+        credentials: "include",
     })
         .then(response => {
             if (!response.ok) {
@@ -21,7 +22,7 @@ function login() {
             localStorage.setItem('accessToken', accessToken);
 
             // 사용자 정보 로드
-            return fetch('http://localhost:8080/member/get_user', {
+            return fetch('https://localhost:443/member/get_user', {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
@@ -61,7 +62,7 @@ function signUp(){
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirm_password').value;
 
-    fetch('http://localhost:8080/api/oauth/signup', {
+    fetch('https://localhost:443/api/oauth/signup', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
