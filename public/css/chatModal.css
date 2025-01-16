@@ -120,3 +120,57 @@
     color: #f44336; /* 빨간색 */
 }
 
+/* ✅ 친구 초대 모달 배경 */
+#inviteModal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+/* ✅ 친구 초대 모달 콘텐츠 */
+#inviteModal .modal-content {
+    background-color: #fff;
+    margin: 15% auto;
+    padding: 20px;
+    border-radius: 8px;
+    width: 350px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* ✅ 닫기 버튼 */
+#inviteModal .close-btn {
+    float: right;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+/* ✅ 유저 코드 입력창 */
+#inviteModal #inviteUserCode {
+    width: 80%;
+    padding: 10px;
+    margin-top: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* ✅ 초대 버튼 */
+#inviteModal button {
+    padding: 10px 20px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+#inviteModal button:hover {
+    background-color: #0056b3;
+}

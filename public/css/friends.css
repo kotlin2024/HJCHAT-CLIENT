@@ -1,0 +1,30 @@
+/* 친구 관리 영역 */
+.friend-management {
+    border: 2px solid #4F46E5;
+    padding: 15px;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    margin-top: 20px;
+}
+
+/* 버튼 스타일 */
+.friend-management button {
+    background-color: #4F46E5;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 5px;
+}
+
+.friend-management button:hover {
+    background-color: #3730a3;
+}
+
+/* 요청 목록 스타일 */
+.friend-request, .sent-request, .friend-item {
+    padding: 10px;
+    margin-top: 10px;
+    border-bottom: 1px solid #ddd;
+}

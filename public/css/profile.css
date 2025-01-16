@@ -1,38 +1,315 @@
+
+
+/* ✅ 전체 레이아웃 */
+.profile-container {
+    margin-top: 50px;
+}
+
 body {
-    padding-top: 80px; /* 네비게이션 바 아래 여백 추가 */
+    padding-top: 80px; /* 네비게이션 바의 높이에 맞게 조정 */
 }
+.navbar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    background-color: #fff; /* 흰색 배경 */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* 약간의 그림자 */
+}
+
+/* ✅ 프로필 이미지와 친구 관리 영역 간 여백 조정 */
+.profile-section, .profile-image {
+    margin-top: 20px; /* 추가 여백 */
+}
+
+/* ✅ 친구 관리 섹션 상단 여백 */
+.friend-management {
+    margin-top: 20px;
+}
+/* ✅ 프로필 정보 */
 .profile-section {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 50px; /* 프로필 섹션 위쪽 여백 */
-    margin-bottom: 30px; /* 프로필 섹션 아래쪽 여백 */
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.profile-details {
-    flex: 1; /* 프로필 텍스트 섹션 */
-    margin-right: 20px;
-}
-
+/* ✅ 프로필 이미지 가운데 정렬 */
 .profile-image {
-    flex-shrink: 0;
-    text-align: center;
+    text-align: center; /* 가운데 정렬 */
+    margin-bottom: 20px;
 }
 
 .profile-image img {
+    width: 200px;
+    height: 200px;
     border-radius: 50%;
-    max-width: 250px;
-    max-height: 250px;
+    object-fit: cover;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
 }
 
-.container {
+/* ✅ 프로필 이미지 업로드 */
+.upload-section {
+    text-align: center;
+}
+
+.upload-section input[type="file"] {
+    width: 80%;
+    padding: 8px;
+    margin-top: 10px;
+}
+
+.upload-section button {
+    width: 80%;
+    padding: 10px;
+    background-color: #28A745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.upload-section button:hover {
+    background-color: #218838;
+}
+
+/* ✅ 친구 관리 섹션 */
+/*.friend-management {*/
+/*    background-color: #f9f9f9;*/
+/*    padding: 20px;*/
+/*    border-radius: 10px;*/
+/*    margin-top: 20px;*/
+/*    border: 2px solid #007BFF; !* 파란색 테두리 *!*/
+/*    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);*/
+/*}*/
+
+/*.friend-management h3 {*/
+/*    color: #007BFF;*/
+/*    text-align: center;*/
+/*    margin-bottom: 20px;*/
+/*}*/
+
+/*.friend-section {*/
+/*    margin-bottom: 20px;*/
+/*}*/
+
+/*.friend-section input {*/
+/*    width: 100%;*/
+/*    padding: 8px;*/
+/*    border: 1px solid #ccc;*/
+/*    border-radius: 5px;*/
+/*}*/
+
+/*.friend-section button {*/
+/*    width: 100%;*/
+/*    padding: 8px;*/
+/*    background-color: #007BFF;*/
+/*    color: white;*/
+/*    border: none;*/
+/*    border-radius: 5px;*/
+/*    cursor: pointer;*/
+/*    margin-top: 10px;*/
+/*}*/
+
+/*.friend-section button:hover {*/
+/*    background-color: #0056b3;*/
+/*}*/
+
+/*!* ✅ 받은 친구 요청 및 친구 목록 *!*/
+/*#receivedRequests, #friendsList {*/
+/*    background-color: #ffffff;*/
+/*    padding: 10px;*/
+/*    border-radius: 5px;*/
+/*    border: 1px solid #ddd;*/
+/*    max-height: 150px;*/
+/*    overflow-y: auto;*/
+/*}*/
+
+/* 새롭게 추가 */
+/* 전체 친구 관리 섹션 */
+.friend-management {
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    width: 350px;
+    margin: 20px auto;
+    font-family: 'Noto Sans KR', sans-serif;
+}
+
+/* 섹션 제목 */
+.friend-management h4 {
+    font-size: 24px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 15px;
+}
+
+/* 입력 필드 */
+.friend-management input[type="text"] {
+    width: 65%;
+    padding: 8px 10px;
+    margin-right: 8px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    transition: border-color 0.3s;
+}
+
+.friend-management input[type="text"]:focus {
+    border-color: #4F46E5;
+    outline: none;
+}
+
+/* 버튼 */
+.friend-management button {
+    background-color: #4F46E5;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.friend-management button:hover {
+    background-color: #3730A3;
+}
+
+/* 하위 섹션 제목 */
+.friend-management h5 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #555;
     margin-top: 20px;
+    margin-bottom: 10px;
 }
 
-h2 {
-    font-size: 2.5rem;
+/* 요청 및 친구 목록 카드 */
+.friend-card, .request-card {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.profile-info p {
-    font-size: 1.2rem;
+/* 친구 이름 */
+.friend-card p, .request-card p {
+    margin: 0;
+    font-size: 15px;
+    color: #333;
 }
+
+/* 요청 수락/거절 버튼 */
+.request-card button {
+    padding: 5px 10px;
+    font-size: 14px;
+    margin-left: 5px;
+}
+
+.accept-btn {
+    background-color: #10B981;
+}
+
+.accept-btn:hover {
+    background-color: #059669;
+}
+
+.reject-btn {
+    background-color: #EF4444;
+}
+
+.reject-btn:hover {
+    background-color: #DC2626;
+}
+
+/* 스크롤 영역 */
+#friendsList, #receivedRequests, #sentRequests {
+    max-height: 200px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+/* 스크롤바 커스터마이징 */
+#friendsList::-webkit-scrollbar,
+#receivedRequests::-webkit-scrollbar,
+#sentRequests::-webkit-scrollbar {
+    width: 6px;
+}
+
+#friendsList::-webkit-scrollbar-thumb,
+#receivedRequests::-webkit-scrollbar-thumb,
+#sentRequests::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 10px;
+}
+/* 친구 목록 카드 기본 스타일 */
+.friend-card {
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    transition: transform 0.2s, background-color 0.3s;
+    cursor: pointer;
+}
+
+/* 마우스 오버 효과 */
+.friend-card:hover {
+    transform: scale(1.02);
+    background-color: #f0f4ff;
+}
+
+/* 친구 상태에 따른 색상 구분 */
+.friend-card.online {
+    border-left: 6px solid #10B981;  /* 초록색 (온라인) */
+    background-color: #E6FFFA;
+}
+
+.friend-card.offline {
+    border-left: 6px solid #D1D5DB;  /* 회색 (오프라인) */
+    background-color: #F9FAFB;
+}
+
+.friend-card.busy {
+    border-left: 6px solid #F59E0B;  /* 주황색 (다른 용무 중) */
+    background-color: #FFF7ED;
+}
+
+.friend-card.blocked {
+    border-left: 6px solid #EF4444;  /* 빨간색 (차단된 친구) */
+    background-color: #FEF2F2;
+}
+
+/* 친구 이름 스타일 */
+.friend-card p {
+    margin: 0;
+    font-size: 15px;
+    color: #333;
+    font-weight: 500;
+}
+
+/* 친구 목록 스크롤 스타일 */
+#friendsList {
+    max-height: 250px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+#friendsList::-webkit-scrollbar {
+    width: 6px;
+}
+
+#friendsList::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 10px;
+}
+

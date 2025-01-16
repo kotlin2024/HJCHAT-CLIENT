@@ -25,6 +25,8 @@
 
     <link rel="stylesheet" href="./css/profile.css">
 
+    <link rel="stylesheet" href="./css/friends.css">
+
 
 </head>
 
@@ -36,34 +38,60 @@
     </div>
 </section>
 
-<div class="container">
-    <!-- 프로필 섹션 -->
-    <div class="profile-section">
-        <!-- 프로필 상세 정보 -->
-        <div class="profile-details">
-            <h2>My Profile</h2>
-            <div class="profile-info">
+<div class="container profile-container">
+    <div class="row">
+        <!-- 🔸 프로필 섹션 (왼쪽) -->
+        <div class="col-lg-6 profile-section">
+            <div class="profile-details">
+                <h2>My Profile</h2>
                 <p><strong>Username:</strong> <span id="username">Loading...</span></p>
+                <p><strong>UserCode:</strong> <span id="userCode">Loading...</span></p>
                 <p><strong>Email:</strong> <span id="email">Loading...</span></p>
             </div>
+
+            <!-- 🔹 친구 관리 섹션 (프로필 정보 아래) -->
+            <div class="friend-management">
+                <h4>친구 관리</h4>
+
+                <!-- 친구 추가 -->
+                <div class="add-friend">
+                    <input type="text" id="friendUsername" placeholder="친구의 유저코드 입력">
+                    <button onclick="sendFriendRequest()">친구 추가</button>
+                </div>
+
+                <!-- 받은 친구 요청 -->
+                <h5>받은 친구 요청</h5>
+                <div id="receivedRequests"></div>
+
+                <!-- 보낸 친구 요청 -->
+                <h5>보낸 친구 요청</h5>
+                <div id="sentRequests"></div>
+
+                <!-- 친구 목록 -->
+                <h5>내 친구 목록</h5>
+                <div id="friendsList"></div>
+            </div>
+
         </div>
 
-        <!-- 프로필 이미지 -->
-        <div class="profile-image">
-            <img src="./images/cody-lannom-G95AReIh_Ko-unsplash.jpeg" alt="Profile Image">
+        <!-- 🔸 프로필 이미지 및 업로드 (오른쪽) -->
+        <div class="col-lg-6">
+            <div class="profile-image">
+                <img src="./images/cody-lannom-G95AReIh_Ko-unsplash.jpeg" alt="Profile Image">
+            </div>
+
+            <div class="upload-section">
+                <h4>프로필 이미지</h4>
+                <form id="uploadForm">
+                    <input type="file" id="profileImage" accept="image/*">
+                    <button type="submit">업로드</button>
+                </form>
+                <div id="uploadResult"></div>
+            </div>
         </div>
     </div>
-
-    <!-- 이미지 업로드 -->
-    <h4 class="mt-4">Upload Profile Image</h4>
-    <form id="uploadForm">
-        <div class="mb-3">
-            <input type="file" id="profileImage" class="form-control" accept="image/*">
-        </div>
-        <button type="submit" class="btn btn-success">Upload Image</button>
-    </form>
-    <div id="uploadResult" class="mt-3"></div>
 </div>
+
 
 <main>
 
@@ -159,6 +187,7 @@
 <script src="js/custom.js"></script>
 <script src="./js/auth.js"></script>
 <script src="./js/profile.js"></script>
+
 
 </body>
 </html>
