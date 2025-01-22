@@ -31,7 +31,10 @@ document.addEventListener("DOMContentLoaded", function () {
                     alert("로그아웃 되었습니다.");
                     window.location.href = "index.html";
                 } else {
-                    throw new Error("로그아웃 실패");
+                    localStorage.clear();
+                    alert("로그아웃 되었습니다.");
+                    window.location.href = "index.html";
+                    throw new Error("토큰 블랙리스트 저장 실패 ");
                 }
 
             } catch (error) {
@@ -47,3 +50,25 @@ document.addEventListener("DOMContentLoaded", function () {
         `;
     }
 });
+
+// ✅ 로그인 상태 확인 함수
+function checkLogin() {
+    const accessToken = localStorage.getItem("accessToken");
+
+    if (!accessToken) {
+        alert("로그인이 필요합니다. 로그인 페이지로 이동합니다.");
+        window.location.href = "./sign-in.html";
+    }
+}
+
+// ✅ 페이지 로드 시 로그인 확인 후 콜백 실행
+function onAuthSuccess(callback) {
+    const accessToken = localStorage.getItem("accessToken");
+
+    if (!accessToken) {
+        alert("로그인이 필요합니다. 로그인 페이지로 이동합니다.");
+        window.location.href = "./sign-in.html";
+    } else {
+        callback();  // 로그인 상태 확인 후 웹소켓 연결
+    }
+}

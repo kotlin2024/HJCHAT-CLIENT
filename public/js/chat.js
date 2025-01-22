@@ -1,6 +1,7 @@
 let ws = null;
 let accessToken = localStorage.getItem('accessToken');
 let currentChatRoomId = null;
+let pingInterval = null;
 
 // WebSocket 초기화
 function initializeWebSocket() {
@@ -14,10 +15,60 @@ function initializeWebSocket() {
                 displayMessage(JSON.parse(message.body));
             });
         }
+
+        startPing()
+
     }, function (error) {
         console.error("WebSocket 연결 실패:", error);
     });
+
+    socket.onclose = function (event) {
+        console.warn(`WebSocket 연결 종료. 코드: ${event.code}, 이유: ${event.reason}`);
+
+        // ✅ Ping Interval 정리
+        clearInterval(pingInterval);
+        pingInterval = null;
+
+        // ✅ 토큰 만료(4001) 시 Access Token 재발급 시도
+        if (event.code === 4001) {
+            reissueAccessToken().then(() => {
+                console.log("🔑 토큰 재발급 성공, 웹소켓 재연결 시도");
+                initializeWebSocket();  // 🔄 웹소켓 재연결
+            }).catch(() => {
+                alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
+                window.location.href = "./sign-in.html";  // ❌ 실패 시 로그인 페이지로 이동
+            });
+        } else {
+            console.error("예상치 못한 웹소켓 종료입니다.");
+        }
+    };
+
+    // ❗ 에러 발생 시 단순 로그 출력
+    socket.onerror = function (error) {
+        console.error("WebSocket 오류 발생:", error);
+    };
+
 }
+
+// ✅ AccessToken 재발급
+async function reissueAccessToken() {
+    const response = await fetch('https://localhost:443/api/oauth/reissue', {
+        method: 'POST',
+        credentials: 'include',  // ✅ HttpOnly 쿠키 전송
+    });
+
+    if (response.ok) {
+        const data = await response.json();
+        const newAccessToken = data.accessToken;
+        localStorage.setItem("accessToken", newAccessToken);
+        accessToken = newAccessToken
+        console.log("🔑 AccessToken 갱신 성공");
+    } else {
+        throw new Error("AccessToken 갱신 실패");
+    }
+}
+
+
 
 // 메시지 전송
 function sendMessage() {
@@ -38,14 +89,6 @@ function sendMessage() {
     }
 }
 
-// 메시지 표시
-// function displayMessage(message) {
-//     const chatBox = document.getElementById('chatBox');
-//     const messageElement = document.createElement('div');
-//     messageElement.innerText = `${message.senderName}: ${message.content}`;
-//     chatBox.appendChild(messageElement);
-//     chatBox.scrollTop = chatBox.scrollHeight;
-// }
 // ✅ 메시지 화면에 출력
 function displayMessage(message) {
     const chatBox = document.getElementById('chatBox');
@@ -123,6 +166,7 @@ function createChatRoom() {
 
     fetch(`https://localhost:443/graphql`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${accessToken}`
@@ -139,7 +183,15 @@ function createChatRoom() {
             `
         })
     })
-        .then(response => response.json())
+        .then(response => {
+            // ✅ Authorization 헤더가 존재하는 경우만 AccessToken 업데이트
+            const newAccessToken = response.headers.get('Authorization')?.split(' ')[1];
+            if (newAccessToken) {
+                localStorage.setItem('accessToken', newAccessToken);
+                console.log("🔑 AccessToken이 갱신되었습니다.");
+            }
+            return response.json()
+        })
         .then(data => {
             if (data.errors) {
                 throw new Error(data.errors[0].message);
@@ -149,6 +201,12 @@ function createChatRoom() {
             alert(`"${chatRoom.roomName}" 채팅방이 ${chatRoom.roomType === 'PUBLIC' ? '공개' : '비공개'}로 생성되었습니다.`);
 
             hideCreateRoomModal(); // 모달 닫기
+            // ✅ 생성 후 채팅방 목록 새로고침
+            if (chatRoom.roomType === 'PUBLIC') {
+                loadPublicRooms();
+            } else {
+                loadPrivateRooms();
+            }
         })
         .catch(error => {
             console.error('채팅방 생성 실패:', error);
@@ -164,6 +222,7 @@ const roomItems = document.getElementById('roomItems');   // 채팅방 목록 �
 function loadPublicRooms() {
     fetch('https://localhost:443/graphql', {
         method: 'POST',
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${accessToken}`
@@ -180,10 +239,20 @@ function loadPublicRooms() {
             `
         })
     })
-        .then(response => response.json())
+        .then(response => {
+            // ✅ Authorization 헤더가 존재하는 경우만 AccessToken 업데이트
+            const newAccessToken = response.headers.get('Authorization')?.split(' ')[1];
+            if (newAccessToken) {
+                localStorage.setItem('accessToken', newAccessToken);
+                console.log("🔑 AccessToken이 갱신되었습니다.");
+            }
+            return response.json()
+        })
         .then(data => {
             const rooms = data.data.getChatRooms.filter(room => room.roomType === 'PUBLIC');
             displayRooms(rooms);
+
+
         })
         .catch(error => {
             console.error('Public 채팅방 목록 로드 실패:', error);
@@ -195,6 +264,7 @@ function loadPublicRooms() {
 function loadPrivateRooms() {
     fetch('https://localhost:443/graphql', {
         method: 'POST',
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${accessToken}`
@@ -211,7 +281,15 @@ function loadPrivateRooms() {
             `
         })
     })
-        .then(response => response.json())
+        .then(response => {
+            // ✅ Authorization 헤더가 존재하는 경우만 AccessToken 업데이트
+            const newAccessToken = response.headers.get('Authorization')?.split(' ')[1];
+            if (newAccessToken) {
+                localStorage.setItem('accessToken', newAccessToken);
+                console.log("🔑 AccessToken이 갱신되었습니다.");
+            }
+            return response.json()
+        })
         .then(data => {
             const rooms = data.data.getAccessPrivateChatRoom;
             displayRooms(rooms);
@@ -246,12 +324,19 @@ function displayRooms(rooms) {
 function joinChatRoom(roomId, roomName) {
     fetch(`https://localhost:443/chatRoom/${roomId}/join`, {
         method: 'POST',
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${accessToken}`
         }
     })
         .then(response => {
+            // ✅ Authorization 헤더가 존재하는 경우만 AccessToken 업데이트
+            const newAccessToken = response.headers.get('Authorization')?.split(' ')[1];
+            if (newAccessToken) {
+                localStorage.setItem('accessToken', newAccessToken);
+                console.log("🔑 AccessToken이 갱신되었습니다.");
+            }
             if (!response.ok) {
                 throw new Error("채팅방 입장 실패");
             }
@@ -288,14 +373,24 @@ function joinChatRoom(roomId, roomName) {
 function loadChatRoomMessages(roomId) {
     fetch(`https://localhost:443/chatroom/${roomId}/messages`, {
         method: 'GET',
+        credentials: 'include',
         headers: {
             'Authorization': `Bearer ${accessToken}`
         }
     })
-        .then(response => response.json())
+        .then(response => {
+            // ✅ Authorization 헤더가 존재하는 경우만 AccessToken 업데이트
+            const newAccessToken = response.headers.get('Authorization')?.split(' ')[1];
+            if (newAccessToken) {
+                localStorage.setItem('accessToken', newAccessToken);
+                console.log("🔑 AccessToken이 갱신되었습니다.");
+            }
+            return response.json()
+        })
         .then(messages => {
             const chatBox = document.getElementById('chatBox');
             chatBox.innerHTML = ''; // 기존 메시지 초기화
+
 
             // ✅ 메시지 렌더링
             messages.forEach(message => displayMessage(message));
@@ -334,6 +429,7 @@ function sendInvite() {
 
     fetch('https://localhost:443/graphql', {
         method: 'POST',
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${accessToken}`
@@ -358,7 +454,15 @@ function sendInvite() {
             `
         })
     })
-        .then(response => response.json())
+        .then(response => {
+            // ✅ Authorization 헤더가 존재하는 경우만 AccessToken 업데이트
+            const newAccessToken = response.headers.get('Authorization')?.split(' ')[1];
+            if (newAccessToken) {
+                localStorage.setItem('accessToken', newAccessToken);
+                console.log("🔑 AccessToken이 갱신되었습니다.");
+            }
+            return response.json()
+        })
         .then(data => {
             if (data.errors) {
                 console.error("초대 실패:", data.errors);
@@ -393,5 +497,33 @@ function loadParticipants() {
     alert("참여자 목록 조회 기능은 준비 중입니다.");
 }
 
+function startPing() {
+    if (pingInterval) {
+        clearInterval(pingInterval); // 기존 인터벌 제거
+    }
 
-window.onload = initializeWebSocket;
+    // 새로운 Ping 인터벌 시작
+    pingInterval = setInterval(() => {
+        sendPing();
+    },  1 * 60 * 1000); // 5초마다 Ping
+}
+
+function sendPing() {
+    if (ws && ws.connected) {
+        ws.send("/app/ping", {}, JSON.stringify({ token: accessToken }));
+        console.log("서버로 ping 요청을 보냈습니다.");
+    } else {
+        console.warn("WebSocket이 연결되지 않아 ping 요청을 보낼 수 없습니다.");
+    }
+}
+
+
+// ✅ 웹소켓 연결 함수
+
+// ✅ 로그인 상태 확인 후 웹소켓 연결 실행
+window.onload = function () {
+    onAuthSuccess(initializeWebSocket);
+};
+
+//window.onload = initializeWebSocket;
+

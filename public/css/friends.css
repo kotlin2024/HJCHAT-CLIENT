@@ -28,3 +28,7 @@
     margin-top: 10px;
     border-bottom: 1px solid #ddd;
 }
+
+#friendsList {
+    color: blue;
+}

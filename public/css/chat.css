@@ -24,6 +24,7 @@ body, html {
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
     display: flex;
     flex-direction: column;
+    overflow: hidden; /* 내부에서 스크롤만 보이도록 설정 */
 }
 
 #chatRooms h2 {
@@ -43,6 +44,13 @@ body, html {
 
 #chatRooms button:hover {
     background-color: #4752c4;
+}
+
+/* 🔹 채팅방 리스트를 스크롤 가능하도록 설정 */
+#roomList {
+    flex-grow: 1;
+    overflow-y: auto; /* 수직 스크롤 활성화 */
+    max-height: calc(100vh - 150px); /* 화면 크기에 따라 스크롤 크기 조정 */
 }
 
 #roomList ul {
