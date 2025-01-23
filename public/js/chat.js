@@ -411,6 +411,7 @@ function openInviteModal() {
         return;
     }
     document.getElementById('inviteModal').style.display = 'block';
+    loadFriendListWithInviteStatus();
 }
 
 // 🔸 모달 닫기
@@ -418,13 +419,51 @@ function closeInviteModal() {
     document.getElementById('inviteModal').style.display = 'none';
 }
 
-// 🔸 친구 초대 기능
-function sendInvite() {
-    const userCode = document.getElementById('inviteUserCode').value;
+// 🔸 현재 채팅방에 참여 중인 멤버 가져오기
+async function getChatRoomMembers() {
+    try {
+        const response = await fetch(`https://localhost:443/chatRoom/${currentChatRoomId}/members`, {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`,
+                'Content-Type': 'application/json'
+            }
+        });
 
-    if (!userCode) {
-        alert("유저 코드를 입력해주세요.");
-        return;
+        if (!response.ok) throw new Error('채팅방 멤버 조회 실패');
+
+        // ✅ Authorization 헤더가 존재하는 경우만 AccessToken 업데이트
+        const newAccessToken = response.headers.get('Authorization')?.split(' ')[1];
+        if (newAccessToken) {
+            localStorage.setItem('accessToken', newAccessToken);
+            console.log("🔑 AccessToken이 갱신되었습니다.");
+        }
+
+        const chatRoomMembers = await response.json();
+        return chatRoomMembers.map(member => Number(member.roomMemberId));  // 멤버 ID 리스트 반환
+    } catch (error) {
+        console.error('채팅방 멤버 조회 실패:', error);
+        return [];
+    }
+}
+
+// 🔸 친구 초대 기능
+function sendInvite(friendCode = null) {
+
+    let userCode;
+
+    // 친구 목록에서 버튼을 눌렀을 때
+    if (friendCode) {
+        userCode = friendCode;
+    } else {
+        // 유저 코드 입력창에서 초대할 때
+        userCode = document.getElementById('inviteUserCode').value;
+
+        if (!userCode) {
+            alert("유저 코드를 입력해주세요.");
+            return;
+        }
     }
 
     fetch('https://localhost:443/graphql', {
@@ -480,6 +519,60 @@ function sendInvite() {
             console.error("초대 중 오류:", error);
             alert("초대 중 오류 발생: " + error.message);
         });
+}
+
+// 🔸 내 친구 목록과 비교하여 초대 버튼 활성화/비활성화
+async function loadFriendListWithInviteStatus() {
+    try {
+        // 내 친구 목록 가져오기
+        const friendsResponse = await fetch('https://localhost:443/friends/get_list', {
+            method: 'GET',
+            credentials: 'include',
+            headers: {
+                'Authorization': `Bearer ${accessToken}`
+            }
+        });
+
+
+
+        if (!friendsResponse.ok) throw new Error('친구 목록 조회 실패');
+
+        // ✅ Authorization 헤더가 존재하는 경우만 AccessToken 업데이트
+        const newAccessToken = friendsResponse.headers.get('Authorization')?.split(' ')[1];
+        if (newAccessToken) {
+            localStorage.setItem('accessToken', newAccessToken);
+            console.log("🔑 AccessToken이 갱신되었습니다.");
+        }
+
+        const friends = await friendsResponse.json();
+
+        // 현재 채팅방 멤버 가져오기
+        const chatRoomMembers = await getChatRoomMembers();
+
+        // 친구 목록 렌더링
+        const friendListElement = document.getElementById('friendList');
+        friendListElement.innerHTML = ''; // 기존 목록 초기화
+
+        friends.forEach(friend => {
+            const isAlreadyInRoom = chatRoomMembers.includes(Number(friend.friendId)); // 채팅방에 참여 여부 확인
+            const friendElement = document.createElement('li');
+
+            friendElement.innerHTML = `
+                <span>${friend.senderName} (${friend.friendCode})</span>
+                <button 
+                    class="${isAlreadyInRoom ? 'btn-in-room' : 'btn-invite'}"
+                    onclick="${!isAlreadyInRoom ? `sendInvite('${friend.friendCode}')` : ''}"
+                    ${isAlreadyInRoom ? 'disabled' : ''} 
+                >
+                    ${isAlreadyInRoom ? '참여 중' : '초대'}
+                </button>
+            `;
+            friendListElement.appendChild(friendElement);
+        });
+    } catch (error) {
+        console.error('친구 목록 로드 실패:', error);
+        alert('친구 목록을 불러오는 데 실패했습니다.');
+    }
 }
 
 // 🔸 모달 외부 클릭 시 닫기
