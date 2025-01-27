@@ -5,11 +5,10 @@ let pingInterval = null;
 
 // WebSocket 초기화
 function initializeWebSocket() {
-    const socket = new SockJS(`https://localhost:443/ws?token=${accessToken}`);
+    const socket = new SockJS(`https://api.hj-chat.com/ws?token=${accessToken}`);
     ws = Stomp.over(socket);
 
     ws.connect({}, function (frame) {
-        console.log("WebSocket 연결 성공:", frame);
         if (currentChatRoomId) {
             ws.subscribe(`/topic/chatroom/${currentChatRoomId}`, function (message) {
                 displayMessage(JSON.parse(message.body));
@@ -32,7 +31,6 @@ function initializeWebSocket() {
         // ✅ 토큰 만료(4001) 시 Access Token 재발급 시도
         if (event.code === 4001) {
             reissueAccessToken().then(() => {
-                console.log("🔑 토큰 재발급 성공, 웹소켓 재연결 시도");
                 initializeWebSocket();  // 🔄 웹소켓 재연결
             }).catch(() => {
                 alert("세션이 만료되었습니다. 다시 로그인 해주세요.");
@@ -52,7 +50,7 @@ function initializeWebSocket() {
 
 // ✅ AccessToken 재발급
 async function reissueAccessToken() {
-    const response = await fetch('https://localhost:443/api/oauth/reissue', {
+    const response = await fetch('https://api.hj-chat.com/api/oauth/reissue', {
         method: 'POST',
         credentials: 'include',  // ✅ HttpOnly 쿠키 전송
     });
@@ -62,13 +60,19 @@ async function reissueAccessToken() {
         const newAccessToken = data.accessToken;
         localStorage.setItem("accessToken", newAccessToken);
         accessToken = newAccessToken
-        console.log("🔑 AccessToken 갱신 성공");
     } else {
         throw new Error("AccessToken 갱신 실패");
     }
 }
 
 
+// ✅ Enter 키로 메시지 전송
+document.getElementById('inputMessage').addEventListener('keydown', function (event) {
+    if (event.key === 'Enter' && !event.shiftKey) { // Enter 키 입력 (Shift + Enter는 제외)
+        event.preventDefault(); // 줄바꿈 방지
+        sendMessage(); // 메시지 전송
+    }
+});
 
 // 메시지 전송
 function sendMessage() {
@@ -164,7 +168,7 @@ function createChatRoom() {
         return;
     }
 
-    fetch(`https://localhost:443/graphql`, {
+    fetch(`https://api.hj-chat.com/graphql`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -220,7 +224,7 @@ const roomItems = document.getElementById('roomItems');   // 채팅방 목록 �
 
 // Public 채팅방 불러오기
 function loadPublicRooms() {
-    fetch('https://localhost:443/graphql', {
+    fetch('https://api.hj-chat.com/graphql', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -262,7 +266,7 @@ function loadPublicRooms() {
 
 // Private 채팅방 불러오기
 function loadPrivateRooms() {
-    fetch('https://localhost:443/graphql', {
+    fetch('https://api.hj-chat.com/graphql', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -322,7 +326,7 @@ function displayRooms(rooms) {
 
 // ✅ 채팅방 입장
 function joinChatRoom(roomId, roomName) {
-    fetch(`https://localhost:443/chatRoom/${roomId}/join`, {
+    fetch(`https://api.hj-chat.com/chatRoom/${roomId}/join`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -371,7 +375,7 @@ function joinChatRoom(roomId, roomName) {
 }
 
 function loadChatRoomMessages(roomId) {
-    fetch(`https://localhost:443/chatroom/${roomId}/messages`, {
+    fetch(`https://api.hj-chat.com/chatroom/${roomId}/messages`, {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -422,7 +426,7 @@ function closeInviteModal() {
 // 🔸 현재 채팅방에 참여 중인 멤버 가져오기
 async function getChatRoomMembers() {
     try {
-        const response = await fetch(`https://localhost:443/chatRoom/${currentChatRoomId}/members`, {
+        const response = await fetch(`https://api.hj-chat.com/chatRoom/${currentChatRoomId}/members`, {
             method: 'GET',
             credentials: 'include',
             headers: {
@@ -466,7 +470,7 @@ function sendInvite(friendCode = null) {
         }
     }
 
-    fetch('https://localhost:443/graphql', {
+    fetch('https://api.hj-chat.com/graphql', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -525,7 +529,7 @@ function sendInvite(friendCode = null) {
 async function loadFriendListWithInviteStatus() {
     try {
         // 내 친구 목록 가져오기
-        const friendsResponse = await fetch('https://localhost:443/friends/get_list', {
+        const friendsResponse = await fetch('https://api.hj-chat.com/friends/get_list', {
             method: 'GET',
             credentials: 'include',
             headers: {

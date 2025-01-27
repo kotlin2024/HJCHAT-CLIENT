@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 const accessToken = localStorage.getItem("accessToken");
 
                 // 서버에 로그아웃 요청 (RefreshToken은 쿠키에서 자동으로 전송됨)
-                const response = await fetch("https://localhost:443/api/oauth/logout", {
+                const response = await fetch("https://api.hj-chat.com/api/oauth/logout", {
                     method: "POST",
                     headers: {
                         "Authorization": `Bearer ${accessToken}`,

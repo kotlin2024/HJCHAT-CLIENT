@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', async function () {
 async function loadUserProfile() {
     let accessToken = localStorage.getItem("accessToken");
 
-    const response = await fetch('https://localhost:443/member/get_user', {
+    const response = await fetch('https://api.hj-chat.com/member/get_user', {
         method: 'GET',
         credentials: 'include',
         headers: {
@@ -80,7 +80,7 @@ async function uploadProfileImage(event) {
     }
 
     try {
-        const response = await fetch(`https://localhost:443/api/s3/upload/url?fileName=${file.name}`, {
+        const response = await fetch(`https://api.hj-chat.com/api/s3/upload/url?fileName=${file.name}`, {
             method: 'POST',
             credentials: 'include',
             headers: {
@@ -135,7 +135,7 @@ function sendFriendRequest() {
 
     const friendId = parseInt(parts[1]);
 
-    fetch('https://localhost:443/friends/request', {
+    fetch('https://api.hj-chat.com/friends/request', {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -171,7 +171,7 @@ function respondToFriendRequest(senderId, accept) {
     let accessToken = localStorage.getItem("accessToken");
     const endpoint = accept ? 'accept' : 'reject';
 
-    fetch(`https://localhost:443/friends/${endpoint}`, {
+    fetch(`https://api.hj-chat.com/friends/${endpoint}`, {
         method: 'POST',
         credentials: 'include',
         headers: {
@@ -208,7 +208,7 @@ function respondToFriendRequest(senderId, accept) {
 async function loadReceivedFriendRequests() {
     let accessToken = localStorage.getItem("accessToken");
 
-    const response = await fetch('https://localhost:443/friends/request', {
+    const response = await fetch('https://api.hj-chat.com/friends/request', {
         method: 'GET',
         credentials: 'include',
         headers: { 'Authorization': `Bearer ${accessToken}` }
@@ -241,7 +241,7 @@ async function loadReceivedFriendRequests() {
 async function loadSentFriendRequests() {
     let accessToken = localStorage.getItem("accessToken");
 
-    const response = await fetch('https://localhost:443/friends/my_request', {
+    const response = await fetch('https://api.hj-chat.com/friends/my_request', {
         method: 'GET',
         credentials: 'include',
         headers: { 'Authorization': `Bearer ${accessToken}` }
@@ -269,7 +269,7 @@ async function getMyFriendsList() {
     let accessToken = localStorage.getItem("accessToken");
 
     try {
-        const response = await fetch('https://localhost:443/friends/get_list', {
+        const response = await fetch('https://api.hj-chat.com/friends/get_list', {
             method: 'GET',
             credentials: 'include',
             headers: { 'Authorization': `Bearer ${accessToken}` }
@@ -316,7 +316,7 @@ async function removeFriend(friendId) {
     if (!confirm("정말로 이 친구를 삭제하시겠습니까?")) return;
 
     try {
-        const response = await fetch(`https://localhost:443/friends/remove/${friendId}`, {
+        const response = await fetch(`https://api.hj-chat.com/friends/remove/${friendId}`, {
             method: 'DELETE',
             credentials: 'include',
             headers: { 'Authorization': `Bearer ${accessToken}` }

@@ -2,7 +2,7 @@ function login() {
     const userName = document.getElementById('userName').value; // 닉네임 가져오기
     const password = document.getElementById('password').value;
 
-    fetch('https://localhost:443/api/oauth/login', {
+    fetch('https://api.hj-chat.com/api/oauth/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -22,7 +22,7 @@ function login() {
             localStorage.setItem('accessToken', accessToken);
 
             // 사용자 정보 로드
-            return fetch('https://localhost:443/member/get_user', {
+            return fetch('https://api.hj-chat.com/member/get_user', {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${accessToken}`,
@@ -39,8 +39,6 @@ function login() {
             localStorage.setItem('userName', data.userName);
             localStorage.setItem('profileImageUrl', data.profileImageUrl);
             localStorage.setItem('userId', data.userId);
-            // console.log("Logged in user ID:", data.userId);
-            // console.log("Logged in user name:", data.userName);
 
             // 메인 홈페이지로 이동
             window.location.href = '/index.html'; // 메인 페이지 URL
@@ -62,7 +60,7 @@ function signUp(){
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirm_password').value;
 
-    fetch('https://localhost:443/api/oauth/signup', {
+    fetch('https://api.hj-chat.com/api/oauth/signup', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -86,10 +84,8 @@ function signUp(){
         .then(data => {
             // 성공 메시지 표시
             alert("Sign-up successful! Please verify your email.");
-            console.log("Response from server:", data);
-
             // 회원가입 완료 후 로그인 페이지로 리다이렉트
-            window.location.href = '/sign-in.html';
+            window.location.href = '/index.html';
         })
         .catch(error => {
             // 서버에서 받은 오류 메시지 표시
