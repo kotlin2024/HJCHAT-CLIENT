@@ -134,7 +134,6 @@ function sendFriendRequest() {
     }
 
     const friendId = parseInt(parts[1]);
-
     fetch('https://api.hj-chat.com/friends/request', {
         method: 'POST',
         credentials: 'include',
@@ -146,9 +145,7 @@ function sendFriendRequest() {
     })
         .then(response => {
             if (!response.ok) throw new Error('친구 요청 실패');
-            return response.json();
-        })
-        .then(() => {
+
             // ✅ Authorization 헤더가 존재하는 경우만 AccessToken 업데이트
             const newAccessToken = response.headers.get('Authorization')?.split(' ')[1];
             if (newAccessToken) {
@@ -156,6 +153,9 @@ function sendFriendRequest() {
                 console.log("🔑 AccessToken이 갱신되었습니다.");
             }
 
+            return response.json();  // ✅ response를 유지하면서 다음 .then()으로 전달
+        })
+        .then(() => {
             alert(`${friendUserCode}님께 친구 요청을 보냈습니다.`);
             loadSentFriendRequests();  // 보낸 요청 목록 갱신
         })
@@ -163,10 +163,75 @@ function sendFriendRequest() {
             console.error('친구 요청 실패:', error);
             alert('친구 요청 실패: ' + error.message);
         });
+
+    // fetch('https://api.hj-chat.com/friends/request', {
+    //     method: 'POST',
+    //     credentials: 'include',
+    //     headers: {
+    //         'Content-Type': 'application/json',
+    //         'Authorization': `Bearer ${accessToken}`
+    //     },
+    //     body: JSON.stringify({ friendId })
+    // })
+    //     .then(response => {
+    //         if (!response.ok) throw new Error('친구 요청 실패');
+    //         return response.json();
+    //     })
+    //     .then(() => {
+    //         // ✅ Authorization 헤더가 존재하는 경우만 AccessToken 업데이트
+    //         const newAccessToken = response.headers.get('Authorization')?.split(' ')[1];
+    //         if (newAccessToken) {
+    //             localStorage.setItem('accessToken', newAccessToken);
+    //             console.log("🔑 AccessToken이 갱신되었습니다.");
+    //         }
+    //
+    //         alert(`${friendUserCode}님께 친구 요청을 보냈습니다.`);
+    //         loadSentFriendRequests();  // 보낸 요청 목록 갱신
+    //     })
+    //     .catch(error => {
+    //         console.error('친구 요청 실패:', error);
+    //         alert('친구 요청 실패: ' + error.message);
+    //     });
 }
 
 
 // ✅ 친구 요청 수락/거절
+// function respondToFriendRequest(senderId, accept) {
+//     let accessToken = localStorage.getItem("accessToken");
+//     const endpoint = accept ? 'accept' : 'reject';
+//
+//     fetch(`https://api.hj-chat.com/friends/${endpoint}`, {
+//         method: 'POST',
+//         credentials: 'include',
+//         headers: {
+//             'Content-Type': 'application/json',
+//             'Authorization': `Bearer ${accessToken}`
+//         },
+//         body: JSON.stringify({ friendId: senderId })
+//     })
+//         .then(response => {
+//             if (!response.ok) throw new Error('친구 요청 처리 실패');
+//             return response.json();
+//         })
+//         .then(() => {
+//             // ✅ Authorization 헤더가 존재하는 경우만 AccessToken 업데이트
+//             const newAccessToken = response.headers.get('Authorization')?.split(' ')[1];
+//             if (newAccessToken) {
+//                 localStorage.setItem('accessToken', newAccessToken);
+//                 console.log("🔑 AccessToken이 갱신되었습니다.");
+//             }
+//
+//             alert(`친구 요청을 ${accept ? '수락' : '거절'}했습니다.`);
+//
+//             getMyFriendsList();
+//             loadReceivedFriendRequests();
+//         })
+//         .catch(error => {
+//             console.error('친구 요청 처리 실패:', error);
+//             alert('친구 요청 처리 실패: ' + error.message);
+//         });
+// }
+
 function respondToFriendRequest(senderId, accept) {
     let accessToken = localStorage.getItem("accessToken");
     const endpoint = accept ? 'accept' : 'reject';
@@ -182,9 +247,7 @@ function respondToFriendRequest(senderId, accept) {
     })
         .then(response => {
             if (!response.ok) throw new Error('친구 요청 처리 실패');
-            return response.json();
-        })
-        .then(() => {
+
             // ✅ Authorization 헤더가 존재하는 경우만 AccessToken 업데이트
             const newAccessToken = response.headers.get('Authorization')?.split(' ')[1];
             if (newAccessToken) {
@@ -192,6 +255,9 @@ function respondToFriendRequest(senderId, accept) {
                 console.log("🔑 AccessToken이 갱신되었습니다.");
             }
 
+            return response.json();  // ✅ response 유지하면서 다음 .then()으로 전달
+        })
+        .then(() => {
             alert(`친구 요청을 ${accept ? '수락' : '거절'}했습니다.`);
 
             getMyFriendsList();
@@ -202,6 +268,7 @@ function respondToFriendRequest(senderId, accept) {
             alert('친구 요청 처리 실패: ' + error.message);
         });
 }
+
 
 
 // ✅ 받은 친구 요청 조회
